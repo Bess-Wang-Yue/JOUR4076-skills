@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>【頁面名稱】原型</title>
+<style>
+  :root {
+    --ink: #1f2a37;      /* 正文 */
+    --muted: #5b6573;    /* 次要文字，對比 > 4.5:1 */
+    --line: #c9ced6;     /* 線框 */
+    --fill: #eef0f3;     /* 區塊底色 */
+    --bg: #fafaf8;
+    --accent: #1d5fa8;   /* 唯一強調色 */
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e6e8ec; font: 16px/1.6 -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif; color: var(--ink); }
+  .device { max-width: 420px; min-height: 100vh; margin: 0 auto; background: var(--bg); }
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+  .zone { position: relative; border: 1.5px dashed var(--line); border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fff; }
+  .zone-no { position: absolute; top: -10px; left: 8px; background: var(--ink); color: #fff; font-size: 12px; padding: 0 6px; border-radius: 4px; }
+  h1 { font-size: 24px; line-height: 1.3; margin: 8px 0; }
+  h2 { font-size: 20px; margin: 4px 0 8px; }
+  .muted { color: var(--muted); }
+  .placeholder { background: #fff4d6; color: #6b4e00; padding: 0 4px; border-radius: 3px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 16px; border-radius: 8px; border: 0; background: var(--accent); color: #fff; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; }
+  .btn.secondary { background: var(--fill); color: var(--ink); }
+  .img-ph { background: var(--fill); border: 1px solid var(--line); border-radius: 6px; display: grid; place-items: center; color: var(--muted); aspect-ratio: 16 / 9; }
+  label { display: block; font-weight: 600; margin: 8px 0 4px; }
+  input, select, textarea { width: 100%; min-height: 44px; font: inherit; padding: 8px; border: 1px solid var(--line); border-radius: 6px; }
+  .toast { position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; display: none; z-index: 20; }
+  .notes-btn { position: fixed; right: 16px; bottom: 16px; z-index: 10; }
+  .notes { position: fixed; inset: auto 0 0 0; max-height: 60vh; overflow: auto; background: #fff; border-top: 2px solid var(--ink); padding: 16px 16px 80px; display: none; z-index: 5; }
+  .notes.open { display: block; }
+  .notes table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .notes th, .notes td { border-bottom: 1px solid var(--line); padding: 6px; text-align: left; vertical-align: top; }
+</style>
+</head>
+<body>
+<div class="device">
+
+  <!-- 每個頁面一個 section.page；第一個加 active -->
+  <section class="page active" id="page-1" aria-label="【頁面名稱】">
+    <div class="zone"><span class="zone-no">1</span>
+      <h1>【大標題，照草圖】</h1>
+      <p class="muted">【說明文字】</p>
+    </div>
+    <div class="zone"><span class="zone-no">2</span>
+      <h2>【區塊標題】</h2>
+      <p>費用：<span class="placeholder">【待填：費用】</span></p>
+      <a class="btn" href="#page-2" data-goto="page-2">【按鈕文字】</a>
+    </div>
+  </section>
+
+  <section class="page" id="page-2" aria-label="【第二頁名稱】">
+    <div class="zone"><span class="zone-no">3</span>
+      <h2>【表格標題】</h2>
+      <label for="f-name">【欄位名稱】</label>
+      <input id="f-name" type="text">
+      <p><button class="btn" data-fake-submit>提交</button>
+         <a class="btn secondary" href="#page-1" data-goto="page-1">返回</a></p>
+    </div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast" role="status">原型示範：不會真的提交</div>
+
+<button class="btn notes-btn" id="notes-btn" aria-expanded="false" aria-controls="notes">設計說明</button>
+<aside class="notes" id="notes" aria-label="設計說明">
+  <h2>設計說明</h2>
+  <table>
+    <tr><th>區塊</th><th>設計決定</th><th>回應 Part A 發現</th></tr>
+    <tr><td>1</td><td>【待填】</td><td>【待填：發現編號】</td></tr>
+    <tr><td>2</td><td>【待填】</td><td>【待填：發現編號】</td></tr>
+    <tr><td>3</td><td>【待填】</td><td>【待填：發現編號】</td></tr>
+  </table>
+</aside>
+
+<script>
+  document.querySelectorAll('[data-goto]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(a.dataset.goto).classList.add('active');
+    window.scrollTo(0, 0);
+  }));
+  document.querySelectorAll('[data-fake-submit]').forEach(b => b.addEventListener('click', e => {
+    e.preventDefault();
+    const t = document.getElementById('toast');
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2200);
+  }));
+  const nb = document.getElementById('notes-btn'), notes = document.getElementById('notes');
+  nb.addEventListener('click', () => {
+    const open = notes.classList.toggle('open');
+    nb.setAttribute('aria-expanded', open);
+  });
+</script>
+</body>
+</html>
